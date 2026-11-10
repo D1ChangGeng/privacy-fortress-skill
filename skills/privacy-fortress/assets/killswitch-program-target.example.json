@@ -1,0 +1,9 @@
+{
+  "targets": [
+    {
+      "name": "ExamplePrivateBrowser",
+      "program": "C:\\Windows\\System32\\notepad.exe",
+      "allowLan": true
+    }
+  ]
+}

@@ -37,8 +37,19 @@ jobs:
         run: python skills/privacy-fortress/scripts/lint_gateway.py skills/privacy-fortress/assets/mihomo.example.yaml
       - name: Run offline audit
         run: python skills/privacy-fortress/scripts/privacy_audit.py --output ./privacy-reports
+      - name: Validate 30-control coverage ledger
+        run: |
+          python skills/privacy-fortress/scripts/coverage_audit.py --list
+          python skills/privacy-fortress/scripts/coverage_audit.py --init ./privacy-reports/coverage.json
+          python skills/privacy-fortress/scripts/coverage_audit.py --ledger ./privacy-reports/coverage.json --output ./privacy-reports/coverage.md
+      - name: Preview Windows firewall targets
+        if: matrix.os == 'windows-latest'
+        run: |
+          powershell -NoProfile -File skills/privacy-fortress/scripts/killswitch.ps1 -Action Plan -ConfigPath skills/privacy-fortress/assets/killswitch-targets.example.json
+          powershell -NoProfile -File skills/privacy-fortress/scripts/killswitch.ps1 -Action Plan -ConfigPath skills/privacy-fortress/assets/killswitch-program-target.example.json
       - name: Validate and package skill
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         run: |
           python tools/package_skill.py --check
           python tools/package_skill.py
+          python tools/package_skill.py --output dist/privacy-fortress.zip

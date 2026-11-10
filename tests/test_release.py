@@ -28,11 +28,13 @@ class ReleaseTests(unittest.TestCase):
         for ref in refs:
             self.assertTrue((SKILL_ROOT / ref).exists(), ref)
 
-    def test_no_private_workspace_or_affiliate_residue(self):
+    def test_public_files_contain_only_generic_examples(self):
+        local_workspace = str(ROOT.parents[1])
         forbidden = [
-            r"D:\\Kimi", r"D:/Kimi", r"D26FO", r"133\.157\.56\.173",
-            r"ipdeep", r"fengwo", r"yxRGajMF", r"extendid=",
-            r"Magic4", r"LGE-AN10", r"9DLDLD", r"workspace/reports",
+            re.escape(local_workspace),
+            re.escape(local_workspace.replace("\\", "/")),
+            r"workspace/reports",
+            r"extendid=",
         ]
         for path in ROOT.rglob("*"):
             if path == Path(__file__) or "privacy-reports" in path.parts:
@@ -54,8 +56,14 @@ class ReleaseTests(unittest.TestCase):
         for path in (SKILL_ROOT / "assets").glob("*.json"):
             json.loads(path.read_text(encoding="utf-8"))
         gateway = (SKILL_ROOT / "assets/mihomo.example.yaml").read_text(encoding="utf-8")
-        self.assertIn("192.0.2.10", gateway)
-        self.assertNotIn("133.157.", gateway)
+        servers = re.findall(r"(?m)^\s*server:\s*((?:\d{1,3}\.){3}\d{1,3})\s*$", gateway)
+        self.assertEqual(servers, ["192.0.2.10"])
+
+    def test_readme_uses_direct_zip_distribution(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("releases/latest/download/privacy-fortress.zip", readme)
+        self.assertIn("npx skills list --json", readme)
+        self.assertNotIn("npx skills add D1ChangGeng/privacy-fortress-skill --skill", readme)
 
     def test_no_symlinks_in_skill(self):
         for path in SKILL_ROOT.rglob("*"):

@@ -45,6 +45,15 @@ python scripts/privacy_audit.py --online --baseline /path/to/baseline.json --out
 4. 定位到具体规则、DNS、TUN 或路径漂移后，小范围重试。
 5. 记录根因和新的回归测试，不把长期关闭防护当修复。
 
-## 5. 复检触发器
+## 5. 30 项覆盖验收
 
-每日可做轻量基线检查；以下事件必须完整复检：更换出口/订阅、修改规则、切换 Wi-Fi、系统或 VPN 升级、浏览器大版本升级、应用路径变化、设备重启后异常、安装新浏览器/VPN/远控。
+```bash
+python scripts/coverage_audit.py --init ./privacy-reports/coverage.json
+python scripts/coverage_audit.py --ledger ./privacy-reports/coverage.json --output ./privacy-reports/coverage.md --require-tested
+```
+
+每项填写 TESTED、CONFIG、UNKNOWN、RESIDUAL 或 NOT_APPLICABLE。TESTED 需要日期和证据；RESIDUAL 与 NOT_APPLICABLE 需要原因。`--require-tested` 在仍有 CONFIG/UNKNOWN 时返回非零，帮助 Agent 把待办清晰交付。脚本校验完整性，实际状态仍来自对应设备与网络测试。
+
+## 6. 复检触发器与节奏
+
+每日可做轻量基线检查；每周或重要变更后做普通浏览器 DNS/WebRTC 深度测试；每月复核账号、公开元数据和残余清单。以下事件必须完整复检：更换出口/订阅、修改规则、切换 Wi-Fi、系统或 VPN 升级、浏览器大版本升级、应用路径/MSIX 包族变化、配置事实源重建、端口切换、设备重启后异常、安装新浏览器/VPN/远控。

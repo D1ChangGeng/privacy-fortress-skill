@@ -1,8 +1,8 @@
 {
   "targets": [
     {
-      "name": "ExamplePrivateBrowser",
-      "program": "C:\\Program Files\\Example\\private-browser.exe",
+      "name": "ExamplePrivateStoreApp",
+      "packageFamilyName": "Example.PrivateApp_a1b2c3d4e5f6g",
       "allowLan": true
     }
   ]
