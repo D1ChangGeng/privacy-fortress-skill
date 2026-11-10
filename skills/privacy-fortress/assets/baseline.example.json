@@ -1,0 +1,6 @@
+{
+  "expected_ipv4": "203.0.113.10",
+  "expected_country": "JP",
+  "expected_timezone": "Asia/Tokyo",
+  "expected_locale": "ja_JP"
+}

@@ -1,0 +1,50 @@
+# Illustration only. Replace every <PLACEHOLDER>, validate with your exact
+# Mihomo version, and never publish the resulting credentials.
+mixed-port: 7890
+allow-lan: false
+mode: rule
+ipv6: false
+find-process-mode: strict
+external-controller: 127.0.0.1:9090
+secret: "<CHANGE_ME>"
+
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: false
+  enhanced-mode: fake-ip
+  respect-rules: true
+  default-nameserver:
+    - "<BOOTSTRAP_DNS_IP>"
+  proxy-server-nameserver:
+    - "<BOOTSTRAP_DNS_IP>"
+  nameserver:
+    - "https://1.1.1.1/dns-query"
+    - "https://8.8.8.8/dns-query"
+
+tun:
+  enable: true
+  stack: system
+  auto-route: true
+  auto-detect-interface: true
+  dns-hijack:
+    - any:53
+
+proxies:
+  - name: "<PROXY_NODE>"
+    type: http
+    server: 192.0.2.10
+    port: 8080
+    username: "<PROXY_USERNAME>"
+    password: "<PROXY_PASSWORD>"
+    tls: true
+
+proxy-groups:
+  - name: "Proxy"
+    type: select
+    proxies:
+      - "<PROXY_NODE>"
+
+rules:
+  - DOMAIN-SUFFIX,example.com,Proxy
+  - MATCH,Proxy

@@ -1,0 +1,37 @@
+name: test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.9', '3.12']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run unit and release tests
+        run: python -m unittest discover -s tests -v
+      - name: Parse PowerShell script
+        shell: pwsh
+        run: |
+          $errors = @()
+          [void][System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path "skills/privacy-fortress/scripts/killswitch.ps1"), [ref]$null, [ref]$errors)
+          if ($errors.Count -gt 0) { $errors | Out-String | Write-Error; exit 1 }
+      - name: Lint bundled gateway example
+        run: python skills/privacy-fortress/scripts/lint_gateway.py skills/privacy-fortress/assets/mihomo.example.yaml
+      - name: Run offline audit
+        run: python skills/privacy-fortress/scripts/privacy_audit.py --output ./privacy-reports
+      - name: Validate and package skill
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        run: |
+          python tools/package_skill.py --check
+          python tools/package_skill.py

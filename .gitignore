@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
+privacy-reports/
+dist/
+*.skill
+.env
+.env.*
+!.env.example
+*.local.json
+*.local.yaml
+*.local.yml

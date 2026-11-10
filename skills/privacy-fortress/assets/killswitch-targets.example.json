@@ -1,0 +1,9 @@
+{
+  "targets": [
+    {
+      "name": "ExamplePrivateBrowser",
+      "program": "C:\\Program Files\\Example\\private-browser.exe",
+      "allowLan": true
+    }
+  ]
+}
